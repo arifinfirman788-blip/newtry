@@ -429,14 +429,14 @@ function App() {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >
                     {/* 顶部大图区域 (根据附件设计) */}
-                    <div className="relative h-[55%] w-full">
-                      <div className="absolute inset-0 overflow-hidden" style={{ clipPath: 'ellipse(100% 100% at 50% 0%)' }}>
+                    <div className="relative h-[65%] w-full">
+                      <div className="absolute inset-0 overflow-hidden" style={{ clipPath: 'ellipse(120% 100% at 50% 0%)' }}>
                         <motion.img 
                           layoutId={`card-image-${selectedRoute.id}`}
                           src={selectedRoute.img} 
                           className="absolute inset-0 w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
                       </div>
                       
                       {/* 顶部控制栏 (左返回，右分享/链接) */}
@@ -444,38 +444,38 @@ function App() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="absolute top-12 left-6 right-6 flex justify-between items-center z-20"
+                        className="absolute top-14 left-6 right-6 flex justify-between items-center z-20"
                       >
                         <button 
                           onClick={() => setSelectedRoute(null)}
-                          className="w-12 h-12 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 text-white"
+                          className="w-12 h-12 bg-black/30 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 text-white shadow-lg active:scale-90 transition-transform"
                         >
                           <ChevronLeft size={24} />
                         </button>
                         <div className="flex gap-3">
-                          <button className="w-12 h-12 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 text-white">
+                          <button className="w-12 h-12 bg-black/30 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 text-white shadow-lg active:scale-90 transition-transform">
                             <Share2 size={20} />
                           </button>
-                          <button className="w-12 h-12 bg-black/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 text-white">
+                          <button className="w-12 h-12 bg-black/30 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20 text-white shadow-lg active:scale-90 transition-transform">
                             <Link2 size={20} />
                           </button>
                         </div>
                       </motion.div>
 
-                      {/* 图片内叠加信息 (左下) */}
-                      <div className="absolute bottom-16 left-8 right-8 z-20 text-white">
+                      {/* 图片内叠加信息 (左下) - 向上微调位置防止与星形按钮重叠 */}
+                      <div className="absolute bottom-24 left-8 right-8 z-20 text-white">
                         <motion.div 
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.4 }}
                           className="flex items-center gap-2 mb-3"
                         >
-                          <Home size={16} />
-                          <span className="text-sm font-bold tracking-wide">34m² 空间</span>
+                          <Home size={16} className="text-white/80" />
+                          <span className="text-sm font-bold tracking-wide text-white/90">34m² 空间</span>
                         </motion.div>
                         <motion.h2 
                           layoutId={`card-title-${selectedRoute.id}`} 
-                          className="text-4xl font-black mb-4 leading-tight"
+                          className="text-4xl font-black mb-5 leading-tight tracking-tight"
                         >
                           {selectedRoute.title}
                         </motion.h2>
@@ -485,8 +485,10 @@ function App() {
                           transition={{ delay: 0.5 }}
                           className="flex items-center gap-2"
                         >
-                          <span className="text-sm font-bold border-b border-white pb-0.5">{selectedRoute.reviews}</span>
-                          <ChevronLeft size={14} className="rotate-180" />
+                          <span className="text-sm font-bold border-b-2 border-white/60 pb-1">{selectedRoute.reviews}</span>
+                          <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                            <ChevronLeft size={14} className="rotate-180" />
+                          </div>
                         </motion.div>
                       </div>
 

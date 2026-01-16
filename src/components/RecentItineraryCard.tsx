@@ -100,7 +100,7 @@ const RecentItineraryCard: React.FC = () => {
     <section className="px-8 mt-8 relative z-10">
       <motion.div
         whileTap={{ scale: 0.98 }}
-        onClick={() => navigate('/schedule')}
+        onClick={() => navigate('/schedule', { state: { featureId: 'home_recent_schedule' } })}
         className="bg-white rounded-[2.5rem] relative overflow-hidden shadow-xl shadow-blue-900/5 border border-gray-100 cursor-pointer group"
       >
         {/* Hero Image Section */}

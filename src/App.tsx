@@ -8,10 +8,14 @@ import InspirationPage from './pages/InspirationPage';
 import ChatPage from './pages/ChatPage';
 import ProfilePage from './pages/ProfilePage';
 
+import { FeatureProvider, useFeature } from './contexts/FeatureContext';
+import FeaturePanel from './components/FeaturePanel';
+
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
+  const { setCurrentFeatureId } = useFeature();
 
   // Hide nav on chat page
   if (currentPath === '/chat') return null;
@@ -23,6 +27,11 @@ const BottomNav = () => {
     { id: 'profile', icon: User, label: '我的', path: '/profile' },
   ];
 
+  const handleNavClick = (item: typeof navItems[0]) => {
+    navigate(item.path);
+    setCurrentFeatureId(item.id);
+  };
+
   return (
     <div className="absolute bottom-8 left-8 right-8 h-20 bg-white rounded-[2.5rem] shadow-[0_20px_40px_rgba(0,0,0,0.1)] flex justify-between items-center px-6 z-[100]">
       {navItems.map((item) => {
@@ -31,7 +40,7 @@ const BottomNav = () => {
         return (
           <motion.button
             key={item.id}
-            onClick={() => navigate(item.path)}
+            onClick={() => handleNavClick(item)}
             whileTap={{ scale: 0.9 }}
             className="relative flex flex-col items-center justify-center gap-1.5 w-14"
           >
@@ -66,43 +75,67 @@ const BottomNav = () => {
 function AppContent() {
   const location = useLocation();
   const isFullScreenPage = location.pathname === '/chat';
+  const { setCurrentFeatureId } = useFeature();
+
+  // Sync route with feature context on mount/change
+  React.useEffect(() => {
+    // If navigation state has featureId, use it
+    if (location.state?.featureId) {
+      setCurrentFeatureId(location.state.featureId);
+      return;
+    }
+
+    // Default route-based selection
+    const path = location.pathname;
+    if (path === '/') setCurrentFeatureId('home');
+    else if (path === '/schedule') setCurrentFeatureId('schedule');
+    else if (path === '/chat') setCurrentFeatureId('chat');
+    else if (path === '/profile') setCurrentFeatureId('profile');
+  }, [location.pathname, location.state, setCurrentFeatureId]);
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] flex items-center justify-center p-4 md:p-10 font-sans">
+    <div className="min-h-screen bg-[#F0F2F5] flex font-sans overflow-hidden">
+      {/* Left Side: Phone Simulator */}
+      <div className="flex-1 flex items-center justify-center p-10 bg-gray-100 relative">
+        {/* 手机外壳框架 */}
+        <div id="phone-frame" className="relative w-[390px] h-[844px] bg-white rounded-[4rem] shadow-[0_0_0_12px_#1A1D2E,0_0_0_15px_#2D3142,0_40px_100px_rgba(0,0,0,0.2)] overflow-hidden border-[8px] border-[#1A1D2E] flex flex-col shrink-0">
+          
+          {/* 顶部状态栏区域 (刘海) */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-8 bg-[#1A1D2E] rounded-b-[2rem] z-[110] flex items-center justify-center">
+            <div className="w-12 h-1 bg-white/10 rounded-full" />
+          </div>
 
-      {/* 手机外壳框架 */}
-      <div id="phone-frame" className="relative w-[390px] h-[844px] bg-white rounded-[4rem] shadow-[0_0_0_12px_#1A1D2E,0_0_0_15px_#2D3142,0_40px_100px_rgba(0,0,0,0.2)] overflow-hidden border-[8px] border-[#1A1D2E] flex flex-col">
-        
-        {/* 顶部状态栏区域 (刘海) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-8 bg-[#1A1D2E] rounded-b-[2rem] z-[110] flex items-center justify-center">
-          <div className="w-12 h-1 bg-white/10 rounded-full" />
+          {/* 内部滚动内容区 */}
+          <div 
+            className={`flex-grow overflow-y-auto no-scrollbar bg-[#FAFAFB] relative ${isFullScreenPage ? '' : 'pb-32'}`}
+          >
+             <Routes>
+               <Route path="/" element={<HomePage />} />
+               <Route path="/inspiration" element={<InspirationPage />} />
+               <Route path="/schedule" element={<SchedulePage />} />
+               <Route path="/chat" element={<ChatPage />} />
+               {/* Placeholders for other routes */}
+               <Route path="/assistant" element={<div className="p-8 pt-20">AI Assistant Coming Soon</div>} />
+               <Route path="/profile" element={<ProfilePage />} />
+             </Routes>
+          </div>
+
+          <BottomNav />
         </div>
-
-        {/* 内部滚动内容区 */}
-        <div 
-          className={`flex-grow overflow-y-auto no-scrollbar bg-[#FAFAFB] relative ${isFullScreenPage ? '' : 'pb-32'}`}
-        >
-           <Routes>
-             <Route path="/" element={<HomePage />} />
-             <Route path="/inspiration" element={<InspirationPage />} />
-             <Route path="/schedule" element={<SchedulePage />} />
-             <Route path="/chat" element={<ChatPage />} />
-             {/* Placeholders for other routes */}
-             <Route path="/assistant" element={<div className="p-8 pt-20">AI Assistant Coming Soon</div>} />
-             <Route path="/profile" element={<ProfilePage />} />
-           </Routes>
-        </div>
-
-        <BottomNav />
       </div>
+
+      {/* Right Side: Feature Panel */}
+      <FeaturePanel />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <AppContent />
-    </BrowserRouter>
+    <FeatureProvider>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <AppContent />
+      </BrowserRouter>
+    </FeatureProvider>
   );
 }

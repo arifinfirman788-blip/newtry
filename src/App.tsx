@@ -18,7 +18,7 @@ const BottomNav = () => {
 
   const navItems = [
     { id: 'home', icon: Home, label: '首页', path: '/' },
-    { id: 'inspiration', icon: Compass, label: '灵感', path: '/inspiration' },
+    // { id: 'inspiration', icon: Compass, label: '灵感', path: '/inspiration' },
     { id: 'schedule', icon: Calendar, label: '行程', path: '/schedule' },
     { id: 'profile', icon: User, label: '我的', path: '/profile' },
   ];
